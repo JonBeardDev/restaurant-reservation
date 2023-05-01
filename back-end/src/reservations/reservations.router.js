@@ -4,9 +4,12 @@
  * @type {Router}
  */
 
-const router = require("express").Router();
+const router = require("express").Router({ mergeParams: true });
 const controller = require("./reservations.controller");
+const methodNotAllowed = require("../errors/methodNotAllowed");
 
-router.route("/").get(controller.list);
+
+// Allow only get and post methods for /reservations root
+router.route("/").get(controller.list).post(controller.create).all(methodNotAllowed);
 
 module.exports = router;
