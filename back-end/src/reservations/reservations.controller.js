@@ -77,11 +77,11 @@ function hasValidDateTime(req, res, next) {
   const reservationDateTime = reservation_date + " " + reservation_time;
   const reservation = new Date(reservationDateTime);
 
-  // RegEx to use to confrim time is valid
+  // RegEx to use to confirm time is valid (1 or 2 digit hours up to 23, separated from minutes by a colon)
   const timeCheck = /^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/;
 
   // Use RegEx to confirm valid time. If not, return 400 error
-  if (reservation_time.match(timeCheck) === null) {
+  if (!reservation_time.match(timeCheck)) {
     return next({ status: 400, message: `reservation_time ${reservation_time} is not a valid time`});
   }
 
