@@ -21,7 +21,7 @@ async function list(req, res) {
   // If date query included in request url, use to list all reservations for that date
   if (date) {
     res.json({ data: await service.listByDate(date) });
-  } 
+  }
   // Otherwise list all reservations
   else {
     res.json({ data: await service.list() });
@@ -31,7 +31,7 @@ async function list(req, res) {
 function hasOnlyValidProperties(req, res, next) {
   const { data = {} } = req.body;
   res.locals.reservation = req.body.data;
-  
+
   // Create array of any fields in the req body that are NOT in the list of valid properties
   const invalidFields = Object.keys(data).filter((field) => {
     !VALID_PROPERTIES.includes(field);
@@ -40,7 +40,7 @@ function hasOnlyValidProperties(req, res, next) {
   if (invalidFields.length)
     return next({
       status: 400,
-      message: `Invalid field(s): ${invalidFields.join(',')}`,
+      message: `Invalid field(s): ${invalidFields.join(",")}`,
     });
 
   next();
@@ -53,7 +53,7 @@ const hasRequiredProperties = hasProperties(
   "mobile_number",
   "reservation_date",
   "reservation_time",
-  "people",
+  "people"
 );
 
 function peopleIsNumber(req, res, next) {
@@ -63,7 +63,8 @@ function peopleIsNumber(req, res, next) {
   if (!validNumber || people <= 0) {
     return next({
       status: 400,
-      message: "The number of people entered is invalid. Number of people must be at least 1",
+      message:
+        "The number of people entered is invalid. Number of people must be at least 1",
     });
   }
 
@@ -82,12 +83,51 @@ function hasValidDateTime(req, res, next) {
 
   // Use RegEx to confirm valid time. If not, return 400 error
   if (!reservation_time.match(timeCheck)) {
-    return next({ status: 400, message: `reservation_time ${reservation_time} is not a valid time`});
+    return next({
+      status: 400,
+      message: `reservation_time ${reservation_time} is not a valid time`,
+    });
   }
 
   // Confirm date/time is a valid date number. If not, return 400 error
   if (isNaN(reservation.getDate())) {
-    return next({ status: 400, message: `reservation_date ${reservation_date} is not a valid date`});
+    return next({
+      status: 400,
+      message: `reservation_date ${reservation_date} is not a valid date`,
+    });
+  }
+
+  next();
+}
+
+// When creating a reservation, make sure reservation is not on a Tuesday
+function notTuesday(req, res, next) {
+  const { reservation_date } = res.locals.reservation;
+  const resDateObj = new Date(reservation_date);
+
+  // getUTCDay returns a value for each day of the week, where Tuesday = 2
+  // If the reservation date's UTC day is 2, it is not valid
+  if (resDateObj.getUTCDay() === 2) {
+    next({
+      status: 400,
+      message:
+        "Reservations cannot be made for Tuesdays, as the restaurant is closed.",
+    });
+  }
+
+  next();
+}
+
+// When creating a reservation, make sure reservation is not for a past date (or past time for today)
+function notInPast(req, res, next) {
+  const { reservation_date} = res.locals.reservation;
+
+  if (Date.parse(reservation_date) < Date.now()) {
+    next({
+      status: 400,
+      message:
+        "Reservations must be made for a future date/time.",
+    });
   }
 
   next();
@@ -101,5 +141,13 @@ async function create(req, res) {
 
 module.exports = {
   list: asyncErrorBoundary(list),
-  create: [hasOnlyValidProperties, hasRequiredProperties, hasValidDateTime, peopleIsNumber, asyncErrorBoundary(create)],
+  create: [
+    hasOnlyValidProperties,
+    hasRequiredProperties,
+    hasValidDateTime,
+    peopleIsNumber,
+    notTuesday,
+    notInPast,
+    asyncErrorBoundary(create),
+  ],
 };
