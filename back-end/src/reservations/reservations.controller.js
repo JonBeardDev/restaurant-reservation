@@ -133,6 +133,21 @@ function notInPast(req, res, next) {
   next();
 }
 
+function availableTime(req, res, next) {
+  const { reservation_time } = res.locals.reservation;
+
+  const timeNoColon = reservation_time.replace(":", "");
+
+  if (timeNoColon < 1030) {
+    next({ status: 400, message: "Reservation must be no earlier than 10:30am." });
+  }
+  if (timeNoColon > 2130) {
+    next({ status: 400, message: "Reservation must be no later than 9:30pm." })
+  }
+
+  next();
+}
+
 // With validation complete, create new reservation
 async function create(req, res) {
   const newReservation = await service.create(res.locals.reservation);
@@ -148,6 +163,7 @@ module.exports = {
     peopleIsNumber,
     notTuesday,
     notInPast,
+    availableTime,
     asyncErrorBoundary(create),
   ],
 };

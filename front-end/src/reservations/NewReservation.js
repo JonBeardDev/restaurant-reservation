@@ -79,10 +79,12 @@ function NewReservation() {
     });
   };
 
+  // Go back to previous page on selecting cancel button
   const cancelHandler = ({ target }) => {
     history.goBack();
   };
 
+  // Post reservation then go to dashboard page for date the reservation is set for
   const submitHandler = async (event) => {
     event.preventDefault();
     createReservation(formState)
