@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { createReservation } from "../utils/api";
-import ErrorAlert from "../layout/ErrorAlert";
 import ReservationForm from "./ReservationForm";
 
 function NewReservation() {
@@ -86,16 +85,18 @@ function NewReservation() {
 
   const submitHandler = async (event) => {
     event.preventDefault();
-    createReservation(formState).then((data) =>
-      history.push(`/dashboard/?date=${data.reservation_date.substring(0, 10)}`)
-    );
+    createReservation(formState)
+      .then((data) =>
+        history.push(
+          `/dashboard/?date=${data.reservation_date.substring(0, 10)}`
+        )
+      )
+      .catch(setError);
   };
 
   return (
     <>
-      <div>
-        <ErrorAlert error={error} />
-      </div>
+      <h2 className="heading my-2 p-2 text-center">New Reservation</h2>
       <div>
         <ReservationForm
           reservationData={formState}
@@ -103,6 +104,7 @@ function NewReservation() {
           cancelHandler={cancelHandler}
           changeHandler={changeHandler}
           phoneHandler={phoneHandler}
+          error={error}
         />
       </div>
     </>
