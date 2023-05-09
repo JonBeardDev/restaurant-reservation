@@ -30,7 +30,7 @@ async function list(req, res) {
 
 function hasOnlyValidProperties(req, res, next) {
   const { data = {} } = req.body;
-  res.locals.reservation = req.body.data;
+  res.locals.reservationData = req.body.data;
 
   // Create array of any fields in the req body that are NOT in the list of valid properties
   const invalidFields = Object.keys(data).filter((field) => {
@@ -57,7 +57,7 @@ const hasRequiredProperties = hasProperties(
 );
 
 function peopleIsNumber(req, res, next) {
-  const { people } = res.locals.reservation;
+  const { people } = res.locals.reservationData;
   const validNumber = Number.isInteger(people);
   // Check if people is a valid (i.e greater than 0) integer. If not, return 400 error
   if (!validNumber || people <= 0) {
@@ -72,7 +72,7 @@ function peopleIsNumber(req, res, next) {
 }
 
 function hasValidDateTime(req, res, next) {
-  const { reservation_date, reservation_time } = res.locals.reservation;
+  const { reservation_date, reservation_time } = res.locals.reservationData;
 
   // Convert separate date and time stamps in req body to a Date strucutre
   const reservationDateTime = reservation_date + " " + reservation_time;
@@ -102,7 +102,7 @@ function hasValidDateTime(req, res, next) {
 
 // When creating a reservation, make sure reservation is not on a Tuesday
 function notTuesday(req, res, next) {
-  const { reservation_date } = res.locals.reservation;
+  const { reservation_date } = res.locals.reservationData;
   const resDateObj = new Date(reservation_date);
 
   // getUTCDay returns a value for each day of the week, where Tuesday = 2
@@ -120,13 +120,12 @@ function notTuesday(req, res, next) {
 
 // When creating a reservation, make sure reservation is not for a past date (or past time for today)
 function notInPast(req, res, next) {
-  const { reservation_date} = res.locals.reservation;
+  const { reservation_date } = res.locals.reservationData;
 
   if (Date.parse(reservation_date) < Date.now()) {
     next({
       status: 400,
-      message:
-        "Reservations must be made for a future date/time.",
+      message: "Reservations must be made for a future date/time.",
     });
   }
 
@@ -134,15 +133,18 @@ function notInPast(req, res, next) {
 }
 
 function availableTime(req, res, next) {
-  const { reservation_time } = res.locals.reservation;
+  const { reservation_time } = res.locals.reservationData;
 
   const timeNoColon = reservation_time.replace(":", "");
 
   if (timeNoColon < 1030) {
-    next({ status: 400, message: "Reservation must be no earlier than 10:30am." });
+    next({
+      status: 400,
+      message: "Reservation must be no earlier than 10:30am.",
+    });
   }
   if (timeNoColon > 2130) {
-    next({ status: 400, message: "Reservation must be no later than 9:30pm." })
+    next({ status: 400, message: "Reservation must be no later than 9:30pm." });
   }
 
   next();
@@ -150,8 +152,29 @@ function availableTime(req, res, next) {
 
 // With validation complete, create new reservation
 async function create(req, res) {
-  const newReservation = await service.create(res.locals.reservation);
+  const newReservation = await service.create(res.locals.reservationData);
   res.status(201).json({ data: newReservation[0] });
+}
+
+// Confirm reservation ID exists in DB
+async function reservationExists(req, res, next) {
+  const reservation_id = req.params.reservation_id;
+  const reservation = await service.read(reservation_id);
+
+  if (reservation) {
+    res.locals.reservation = reservation;
+    return next();
+  }
+
+  next({
+    status: 404,
+    message: `Reservation ID ${reservation_id} cannot be found.`,
+  });
+}
+
+// Return individual reservation
+function read(req, res, next) {
+  res.json({ data: res.locals.reservation });
 }
 
 module.exports = {
@@ -166,4 +189,5 @@ module.exports = {
     availableTime,
     asyncErrorBoundary(create),
   ],
+  read: [asyncErrorBoundary(reservationExists), read],
 };

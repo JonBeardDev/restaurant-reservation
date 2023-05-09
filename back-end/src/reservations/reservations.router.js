@@ -11,5 +11,6 @@ const methodNotAllowed = require("../errors/methodNotAllowed");
 
 // Allow only get and post methods for /reservations root
 router.route("/").get(controller.list).post(controller.create).all(methodNotAllowed);
+router.route("/:reservation_id").get(controller.read).all(methodNotAllowed);
 
 module.exports = router;
