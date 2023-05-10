@@ -152,8 +152,8 @@ function notOccupied(req, res, next) {
 
 async function destroy(req, res, next) {
   const { table_id } = res.locals.table;
-  await service.destroy(table_id);
-  res.sendStatus(200);
+  const data = await service.destroy(table_id);
+  res.status(200).json({ data });
 }
 
 module.exports = {

@@ -41,10 +41,10 @@ function Dashboard({ date }) {
 
   return (
     <main>
-      <ErrorAlert error={resError} />
-      <ErrorAlert error={tableError} />
       <div className="d-flex row">
         <div className="col-sm-12 col-xl-8">
+          <ErrorAlert error={resError} />
+          <ErrorAlert error={tableError} />
           <h2 className="heading my-2 p-2 text-center">
             Reservations for {date}
           </h2>
@@ -69,7 +69,11 @@ function Dashboard({ date }) {
                 <h5>No tables have been created.</h5>
               </div>
             ) : (
-              <TablesList tables={tables} />
+              <TablesList
+                tables={tables}
+                loadDashboard={loadDashboard}
+                setTableError={setTableError}
+              />
             )}
           </div>
         </div>

@@ -1,9 +1,9 @@
 import React from "react";
 import Table from "./Table";
 
-function TablesList({ tables }) {
+function TablesList({ tables, loadDashboard, setTableError }) {
   const tablesList = tables.map((table, index) => (
-    <Table key={index} table={table} />
+    <Table key={index} table={table} loadDashboard={loadDashboard} setTableError={setTableError} />
   ));
   
   return (

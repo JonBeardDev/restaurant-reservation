@@ -136,11 +136,11 @@ export async function readReservation(reservation_id, signal) {
 
 /**
  * Updates a table to "seat" a reservation by adding the reservation ID
- * @param table_id 
+ * @param table_id
  * the table_id property of the table to be updated
  * @param reservation_id
  * the reservation_id of the reservation to be added to the table
- * @param signal 
+ * @param signal
  * optional AbortController.signal
  * @returns {Promise<Error|*>}
  * a promise that resolves to the updated table
@@ -152,6 +152,22 @@ export async function updateTable(table_id, reservation_id, signal) {
     headers,
     body: JSON.stringify({ data: { reservation_id: reservation_id } }),
     signal,
+  };
+  return await fetchJson(url, options);
+}
+
+/**
+ * "Deletes" a reservation from an occupied table. (i.e. sets reservation_id to null)
+ * @param table_id
+ * the table_id property of the table to be reverted
+ * @returns {Promise<Error|*>}
+ * a promise that resolves to an empty object
+ */
+export async function finishSeating(table_id) {
+  const url = new URL(`${API_BASE_URL}/tables/${table_id}/seat`);
+  const options = {
+    method: "DELETE",
+    headers,
   };
   return await fetchJson(url, options);
 }
