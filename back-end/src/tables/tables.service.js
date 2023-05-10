@@ -31,10 +31,19 @@ function readReservation(reservation_id) {
     .first();
 }
 
+// "Destroy" as in set a table's reservation ID to null, freeing it up for re-seating
+function destroy(table_id) {
+  return knex("tables")
+    .select("*")
+    .where({ table_id: table_id })
+    .update({ reservation_id: null });
+}
+
 module.exports = {
   list,
   create,
   read,
   update,
   readReservation,
+  destroy,
 };
