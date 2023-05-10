@@ -1,0 +1,43 @@
+.tables {
+    background-color: #DED9DA;
+    height: 100vh;
+}
+
+.center {
+    text-align: center;
+    margin-left: 3rem;
+    margin-right: 3rem;
+    background-color: rgba(103, 253, 255, 0.5);
+    display: block;
+    -webkit-box-shadow: 0 10px 6px -6px rgb(224, 224, 224);
+    -moz-box-shadow: 0 10px 6px -6px rgb(224, 224, 224);
+    box-shadow: 0 10px 6px -6px rgb(224, 224, 224);
+}
+
+.field-color {
+    background-color: white;
+    padding: 10px;
+    border-radius: 15px;
+    border-color: rgb(73, 154, 201);
+}
+
+.field-color:focus {
+    outline: none;
+}
+
+.res__button {
+    text-align: center;
+    margin: 1rem;
+    background-color: rgb(65, 56, 56);
+    color: white;
+}
+
+.res__button:hover {
+    background-color: rgb(73, 154, 201);
+    color: white;
+  }
+
+#needs-validation center {
+    display: block;
+    margin-top: 0em;
+}
