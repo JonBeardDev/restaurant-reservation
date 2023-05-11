@@ -37,6 +37,12 @@ function Reservation({ reservation }) {
     showStatus = (
       <h5 data-reservation-id-status={reservation.reservation_id}>Seated</h5>
     );
+  } else if (status === "finished") {
+    boxClass =
+      "border border-dark rounded p-4 h-100 d-flex flex-column justify-content-between bg-secondary text-light shadow";
+    showStatus = (
+      <h5 data-reservation-id-status={reservation.reservation_id}>Finished</h5>
+    );
   }
 
   return (
