@@ -107,7 +107,7 @@ async function reservationExists(req, res, next) {
   const reservation = await service.readReservation(reservation_id);
 
   if (reservation) {
-    res.locals.people = reservation.people;
+    res.locals.reservation = reservation;
     return next();
   }
 
@@ -117,9 +117,26 @@ async function reservationExists(req, res, next) {
   });
 }
 
+function statusIsBooked(req, res, next) {
+  const status = res.locals.reservation.status;
+  if (status === "seated") {
+    return next({
+      status: 400,
+      message: "Reservation is already seated.",
+    });
+  }
+  if (status === "finished") {
+    return next({
+      status: 400,
+      message: "Reservation is already finished.",
+    });
+  }
+  next();
+}
+
 function hasAvailableCapacity(req, res, next) {
   const { table_name, capacity } = res.locals.table;
-  const people = res.locals.people;
+  const people = res.locals.reservation.people;
 
   if (people > capacity) {
     return next({
@@ -134,6 +151,7 @@ async function update(req, res) {
   const { reservation_id } = req.body.data;
   const updatedTable = { ...res.locals.table, reservation_id: reservation_id };
 
+  await service.statusToSeated(reservation_id);
   const data = await service.update(updatedTable);
   res.status(200).json({ data });
 }
@@ -150,9 +168,10 @@ function notOccupied(req, res, next) {
   next();
 }
 
-async function destroy(req, res, next) {
-  const { table_id } = res.locals.table;
-  const data = await service.destroy(table_id);
+async function unseat(req, res, next) {
+  const { table_id, reservation_id } = res.locals.table;
+  await service.statusToFinished(reservation_id);
+  const data = await service.unseat(table_id);
   res.status(200).json({ data });
 }
 
@@ -169,12 +188,13 @@ module.exports = {
     asyncErrorBoundary(tableExists),
     isAvailable,
     asyncErrorBoundary(reservationExists),
+    statusIsBooked,
     hasAvailableCapacity,
     asyncErrorBoundary(update),
   ],
   delete: [
     asyncErrorBoundary(tableExists),
     notOccupied,
-    asyncErrorBoundary(destroy),
+    asyncErrorBoundary(unseat),
   ],
 };

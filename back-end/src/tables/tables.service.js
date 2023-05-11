@@ -23,20 +23,36 @@ function update(updatedTable) {
     .update({ reservation_id: updatedTable.reservation_id }, "*");
 }
 
-// Return people count from reservation, used to determine if a table can seat them
+// Retrieve reservation to check status and number of people
 function readReservation(reservation_id) {
   return knex("reservations")
-    .select("people")
+    .select("*")
     .where({ reservation_id: reservation_id })
     .first();
 }
 
-// "Destroy" as in set a table's reservation ID to null, freeing it up for re-seating
-function destroy(table_id) {
+// Sets a table's reservation ID to null, freeing it up for re-seating
+function unseat(table_id) {
   return knex("tables")
     .select("*")
     .where({ table_id: table_id })
     .update({ reservation_id: null }, "*");
+}
+
+// Sets the status of a reservation to seated when added to a table
+function statusToSeated(reservation_id) {
+  return knex("reservations")
+    .select("*")
+    .where({ reservation_id: reservation_id })
+    .update({ status: "seated" }, "*");
+}
+
+// Set the status of a reservation to finished when removed from a table
+function statusToFinished(reservation_id) {
+  return knex("reservations")
+    .select("*")
+    .where({ reservation_id: reservation_id })
+    .update({ status: "finished" }, "*");
 }
 
 module.exports = {
@@ -45,5 +61,7 @@ module.exports = {
   read,
   update,
   readReservation,
-  destroy,
+  unseat,
+  statusToSeated,
+  statusToFinished,
 };
