@@ -17,7 +17,7 @@ const VALID_PROPERTIES = [
 ];
 
 // Valid statuses for a reservation
-const VALID_STATUS = ["booked", "seated", "finished"];
+const VALID_STATUS = ["booked", "seated", "finished", "cancelled"];
 
 async function list(req, res) {
   const { date, mobile_number } = req.query;
@@ -159,7 +159,7 @@ function availableTime(req, res, next) {
 function statusIsBooked(req, res, next) {
   const { status } = res.locals.reservationData;
 
-  if (status === "seated" || status === "finished") {
+  if (status && status !== "booked") {
     next({
       status: 400,
       message: `Invalid status: ${status}. Status must be 'booked' for new reservations.`,
@@ -200,7 +200,7 @@ function hasValidStatus(req, res, next) {
   if (!VALID_STATUS.includes(data.status)) {
     return next({
       status: 400,
-      message: `Invalid status: ${data.status}. Reservation status may only be 'booked', 'seated'. or 'finished'.`,
+      message: `Invalid status: ${data.status}. Reservation status may only be 'booked', 'seated', 'finished', or 'cancelled.`,
     });
   }
   next();
@@ -226,6 +226,15 @@ async function updateStatus(req, res) {
   res.status(200).json({ data });
 }
 
+async function update(req, res) {
+  const updatedRes = {
+    ...req.body.data,
+    reservation_id: res.locals.reservation.reservation_id,
+  };
+  const data = await service.update(updatedRes);
+  res.json({ data });
+}
+
 module.exports = {
   list: asyncErrorBoundary(list),
   create: [
@@ -245,5 +254,17 @@ module.exports = {
     hasValidStatus,
     isFinished,
     asyncErrorBoundary(updateStatus),
+  ],
+  update: [
+    asyncErrorBoundary(reservationExists),
+    hasOnlyValidProperties,
+    hasRequiredProperties,
+    hasValidDateTime,
+    peopleIsNumber,
+    notTuesday,
+    notInPast,
+    availableTime,
+    statusIsBooked,
+    update,
   ],
 };

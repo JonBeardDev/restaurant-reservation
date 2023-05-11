@@ -50,6 +50,14 @@ function updateStatus(updatedRes) {
     .then((data) => data[0]);
 }
 
+function update(updatedRes) {
+  return knex("reservations")
+    .select("*")
+    .where({ reservation_id: updatedRes.reservation_id })
+    .update(updatedRes, "*")
+    .then((data) => data[0]);
+}
+
 module.exports = {
   list,
   listByDate,
@@ -57,4 +65,5 @@ module.exports = {
   read,
   updateStatus,
   listByMobile,
+  update,
 };
