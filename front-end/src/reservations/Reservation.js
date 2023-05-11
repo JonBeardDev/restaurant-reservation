@@ -19,7 +19,7 @@ function Reservation({ reservation }) {
     showStatus = "";
   if (status === "booked") {
     boxClass =
-      "border border-info rounded p-4 h-100 d-flex flex-column justify-content-between reservation_card shadow";
+      "border border-info rounded p-4 h-100 d-flex flex-column justify-content-between booked shadow";
     showStatus = (
       <h5 data-reservation-id-status={reservation.reservation_id}>
         Booked -{" "}

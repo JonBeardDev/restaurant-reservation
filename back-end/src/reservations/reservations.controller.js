@@ -20,11 +20,13 @@ const VALID_PROPERTIES = [
 const VALID_STATUS = ["booked", "seated", "finished"];
 
 async function list(req, res) {
-  const { date } = req.query;
+  const { date, mobile_number } = req.query;
 
   // If date query included in request url, use to list all reservations for that date
   if (date) {
     res.json({ data: await service.listByDate(date) });
+  } else if (mobile_number) {
+    res.json({ data: await service.listByMobile(mobile_number) });
   }
   // Otherwise list all reservations
   else {

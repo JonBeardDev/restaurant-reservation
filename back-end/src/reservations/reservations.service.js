@@ -14,8 +14,18 @@ function listByDate(date) {
   return knex("reservations")
     .select("*")
     .where({ reservation_date: date })
-    .whereNot({ status: "finished"})
+    .whereNot({ status: "finished" })
     .orderBy("reservation_time");
+}
+
+// List all reservations for given mobile number, ordered by date (most recent first)
+function listByMobile(mobile_number) {
+  return knex("reservations")
+    .whereRaw(
+      "translate(mobile_number, '() -', '') like ?",
+      `%${mobile_number.replace(/\D/g, "")}%`
+    )
+    .orderBy("reservation_date", "desc");
 }
 
 // Add new reservation, return all columns
@@ -23,6 +33,7 @@ function create(reservation) {
   return knex("reservations").insert(reservation).returning("*");
 }
 
+// Return a single reservation by ID
 function read(reservation_id) {
   return knex("reservations")
     .select("*")
@@ -30,6 +41,7 @@ function read(reservation_id) {
     .first();
 }
 
+// Update the status of a reservation (when seating or finishing the reservation)
 function updateStatus(updatedRes) {
   return knex("reservations")
     .select("*")
@@ -44,4 +56,5 @@ module.exports = {
   create,
   read,
   updateStatus,
+  listByMobile,
 };
