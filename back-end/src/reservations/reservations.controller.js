@@ -126,9 +126,11 @@ function notTuesday(req, res, next) {
 
 // When creating a reservation, make sure reservation is not for a past date (or past time for today)
 function notInPast(req, res, next) {
-  const { reservation_date } = res.locals.reservationData;
+  const { reservation_date, reservation_time } = res.locals.reservationData;
 
-  if (Date.parse(reservation_date) < Date.now()) {
+  // Set a date/time that Date.parse can read to ensure reservations for later the same day are possible
+  const parsableTime = `${reservation_date}T${reservation_time}:00`;
+  if (Date.parse(parsableTime) < Date.now()) {
     next({
       status: 400,
       message: "Reservations must be made for a future date/time.",

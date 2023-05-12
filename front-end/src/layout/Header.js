@@ -1,15 +1,15 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import headerImage from "../images/header.jpg";
+import headerImage from "../images/header2.jpg";
 import logo from "../images/Pt.png";
 import Menu from "./Menu";
 
 function Header() {
   const style = {
-    background: `linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url(${headerImage})`,
+    background: `linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.5)), url(${headerImage})`,
     height: "200px",
     backgroundPosition: "center",
-    backgroundSize: "100% auto",
+    backgroundSize: "cover",
   };
 
   return (

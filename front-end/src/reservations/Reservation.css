@@ -6,6 +6,10 @@
   background-color: #ded9da;
 }
 
+.cancelled {
+  background-color: #df859f;
+}
+
 .shadow {
   -webkit-box-shadow: 0 10px 6px -6px rgb(224, 224, 224);
   -moz-box-shadow: 0 10px 6px -6px rgb(224, 224, 224);

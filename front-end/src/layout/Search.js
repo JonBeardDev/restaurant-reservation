@@ -69,7 +69,7 @@ function Search() {
             <h5>{message}</h5>
           </div>
         ) : (
-          <ReservationList reservations={reservations} />
+          <ReservationList reservations={reservations} setError={setError} />
         )}
       </div>
     </main>

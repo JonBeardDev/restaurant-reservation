@@ -15,6 +15,7 @@ function listByDate(date) {
     .select("*")
     .where({ reservation_date: date })
     .whereNot({ status: "finished" })
+    .andWhereNot({ status: "cancelled" })
     .orderBy("reservation_time");
 }
 

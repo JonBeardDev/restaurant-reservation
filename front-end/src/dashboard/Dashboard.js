@@ -57,7 +57,7 @@ function Dashboard({ date }) {
                 <h5>There are no reservations for this date.</h5>
               </div>
             ) : (
-              <ReservationList reservations={reservations} />
+              <ReservationList reservations={reservations} setError={setResError} />
             )}
           </div>
         </div>
