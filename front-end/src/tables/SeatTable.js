@@ -31,10 +31,11 @@ function SeatTable() {
   const submitHandler = async (event) => {
     event.preventDefault();
 
+    const abortController = new AbortController();
     const form = document.getElementById("select");
     const table_id = form.value;
 
-    await updateTable(table_id, reservation_id)
+    await updateTable(table_id, reservation_id, abortController.signal)
       .then((data) => history.push("/dashboard"))
       .catch(setTableError);
   };

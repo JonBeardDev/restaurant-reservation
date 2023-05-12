@@ -96,7 +96,8 @@ function EditReservation() {
   // Post reservation then go to previous page
   const submitHandler = async (event) => {
     event.preventDefault();
-    editReservation(formState)
+    const abortController = new AbortController();
+    editReservation(formState, abortController.signal)
       .then((data) => history.push(
         `/dashboard/?date=${data.reservation_date.substring(0, 10)}`
       ))

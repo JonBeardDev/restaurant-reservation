@@ -6,7 +6,7 @@ import { today } from "../utils/date-time";
 import NewReservation from "../reservations/NewReservation";
 import NewTable from "../tables/NewTable";
 import SeatTable from "../tables/SeatTable";
-import Search from "./Search";
+import Search from "../reservations/Search";
 import EditReservation from "../reservations/EditReservation";
 
 /**

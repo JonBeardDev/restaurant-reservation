@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { listReservations } from "../utils/api";
-import ReservationList from "../reservations/ReservationList";
-import ErrorAlert from "./ErrorAlert";
+import ReservationList from "./ReservationList";
+import ErrorAlert from "../layout/ErrorAlert";
 import "./Search.css";
 
 function Search() {

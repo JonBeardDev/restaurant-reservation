@@ -34,7 +34,8 @@ function NewTable() {
 
   const submitHandler = async (event) => {
     event.preventDefault();
-    createTable(formState)
+    const abortController = new AbortController();
+    createTable(formState, abortController.signal)
       .then((data) => history.push(`/dashboard`))
       .catch(setError);
   };

@@ -12,7 +12,8 @@ function Table({ table, loadDashboard, setTableError }) {
         "Is this table ready to seat new guests? This cannot be undone."
       )
     ) {
-      finishSeating(table_id)
+      const abortController = new AbortController();
+      finishSeating(table_id, abortController.signal)
         .then((data) => loadDashboard())
         .catch(setTableError);
     }

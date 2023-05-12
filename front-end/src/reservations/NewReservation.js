@@ -87,7 +87,8 @@ function NewReservation() {
   // Post reservation then go to dashboard page for date the reservation is set for
   const submitHandler = async (event) => {
     event.preventDefault();
-    createReservation(formState)
+    const abortController = new AbortController();
+    createReservation(formState, abortController.signal)
       .then((data) =>
         history.push(
           `/dashboard/?date=${data.reservation_date.substring(0, 10)}`
