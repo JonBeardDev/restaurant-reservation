@@ -14,11 +14,13 @@ router
   .get(controller.list)
   .post(controller.create)
   .all(methodNotAllowed);
+// Allow only get and put methods for individual reservation ids
 router
   .route("/:reservation_id")
   .get(controller.read)
   .put(controller.update)
   .all(methodNotAllowed);
+// Allow only put method for reservation status
 router
   .route("/:reservation_id/status")
   .put(controller.updateStatus)

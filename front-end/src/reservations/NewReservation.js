@@ -3,9 +3,14 @@ import { useHistory } from "react-router-dom";
 import { createReservation } from "../utils/api";
 import ReservationForm from "./ReservationForm";
 
+/**
+ * Displays form for creating a new reservation
+ * @returns {JSX.Element}
+ */
 function NewReservation() {
   const history = useHistory();
 
+  // Set all fields to blank (0 for people)
   const initialFormState = {
     first_name: "",
     last_name: "",

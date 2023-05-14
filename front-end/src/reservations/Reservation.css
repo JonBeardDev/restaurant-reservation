@@ -1,3 +1,4 @@
+/* Set background colors for reservation card for each reservation status */
 .booked {
   background-color: rgba(103, 253, 255, 0.5);
 }

@@ -1,3 +1,10 @@
+/* background for Table section of dashboard */
 .tables {
     background-color: #DED9DA;
+    height: 100vh;
+}
+
+/* prevent horizontal scrollbar */
+body {
+    overflow-x: hidden;
 }

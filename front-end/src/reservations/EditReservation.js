@@ -3,11 +3,16 @@ import { useHistory, useParams } from "react-router";
 import { readReservation, editReservation } from "../utils/api";
 import ReservationForm from "./ReservationForm";
 
+/**
+ * Displays the reservation form with existing reservation details
+ * @returns {JSX.Element}
+ */
 function EditReservation() {
   const history = useHistory();
   const [error, setError] = useState(null);
   const { reservation_id } = useParams();
 
+  // Define keys for form state. Will update when reservation loads from API
   const [formState, setFormState] = useState({
     first_name: "",
     last_name: "",
@@ -18,6 +23,7 @@ function EditReservation() {
     reservation_id,
   });
 
+  // Load reservation and set form fields to existing data
   useEffect(() => {
     const abortController = new AbortController();
     readReservation(reservation_id, abortController.signal)
@@ -35,6 +41,7 @@ function EditReservation() {
       .catch(setError);
   }, [reservation_id]);
 
+  // Note: People must be an integer
   const changeHandler = ({ target }) => {
     setFormState({
       ...formState,

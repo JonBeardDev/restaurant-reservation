@@ -1,5 +1,10 @@
-// Function to confirm a list of properties exists in the req.body
-
+/**
+ * Confirms a list of properties exists in the req.body
+ * @param  {...any} properties 
+ * An array of property names
+ * @returns 
+ * next(), if the property exists, or throws a 400 error if it does not
+ */
 function hasProperties(...properties) {
   return function (res, req, next) {
     const { data = {} } = res.body;

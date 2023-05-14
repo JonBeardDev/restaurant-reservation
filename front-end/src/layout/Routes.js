@@ -8,11 +8,10 @@ import NewTable from "../tables/NewTable";
 import SeatTable from "../tables/SeatTable";
 import Search from "../reservations/Search";
 import EditReservation from "../reservations/EditReservation";
+import EditTable from "../tables/EditTable";
 
 /**
  * Defines all the routes for the application.
- *
- * You will need to make changes to this file.
  *
  * @returns {JSX.Element}
  */
@@ -42,6 +41,9 @@ function Routes() {
       </Route>
       <Route path="/reservations/:reservation_id/edit">
         <EditReservation />
+      </Route>
+      <Route path="/tables/:table_id/edit">
+        <EditTable />
       </Route>
       <Route>
         <NotFound />

@@ -2,10 +2,27 @@
     height: 180px;
     width: 180px;
     margin: auto;
+    background-color: #54B4D3;
+}
+
+.free {
+    background-color: #54B4D3;
 }
 
 .shadow {
     -webkit-box-shadow: 0 10px 6px -6px rgb(224, 224, 224);
     -moz-box-shadow: 0 10px 6px -6px rgb(224, 224, 224);
     box-shadow: 0 10px 6px -6px rgb(224, 224, 224);
-  }
+}
+
+.free:hover{
+    background-color: #2d84a1;
+}
+
+.occupied {
+    background-color: #6c757d;
+}
+
+.occupied:hover {
+    background-color: #424a52;
+}

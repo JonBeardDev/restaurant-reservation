@@ -5,6 +5,10 @@ import { listTables, readReservation, updateTable } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 import TablesList from "./TablesList";
 
+/**
+ * Displays form to select which table to seat a reservation at. Includes tables as shown in dashboard for visual reference
+ * @returns {JSX.Element}
+ */
 function SeatTable() {
   const history = useHistory();
   const { reservation_id } = useParams();
@@ -14,6 +18,7 @@ function SeatTable() {
   const [reservation, setReservation] = useState([]);
   const [resError, setResError] = useState(null);
 
+  // Load all tables and reservation from parameters
   function loadPage() {
     const abortController = new AbortController();
     setTableError(null);
@@ -26,8 +31,11 @@ function SeatTable() {
     return () => abortController.abort();
   }
 
+  // Rerender page any time the reservation ID changes
   useEffect(loadPage, [reservation_id]);
 
+  // Pull value from select dropdown on form and update the table to be seated
+  // Go to dashboard on completion
   const submitHandler = async (event) => {
     event.preventDefault();
 
@@ -40,6 +48,7 @@ function SeatTable() {
       .catch(setTableError);
   };
 
+  // Display each table in dropdown menu with name and capacity
   const tableOptions = tables.map((table, index) => {
     return (
       <option key={index} value={table.table_id}>

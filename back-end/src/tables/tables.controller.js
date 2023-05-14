@@ -2,7 +2,7 @@ const service = require("./tables.service");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 const hasProperties = require("../errors/hasProperties");
 
-// Valid properties for creating a new table (or updating in future user story)
+// Valid properties for creating/updating a table
 const VALID_PROPERTIES = [
   "table_id",
   "capacity",
@@ -12,16 +12,17 @@ const VALID_PROPERTIES = [
   "updated_at",
 ];
 
-// Return all columns for all tables
+// Main function: Return all columns for all tables
 async function list(req, res, next) {
   const tables = await service.list();
   res.json({ data: tables });
 }
 
-// Confirm create request contains only valid properties
+// Middleware: Confirm create request contains only valid properties
+// Used in: create and editTable
 function hasOnlyValidProperties(req, res, next) {
   const { data = {} } = req.body;
-  res.locals.table = req.body.data;
+  res.locals.tableData = req.body.data;
 
   // Create array of any fields in the req body that are NOT in the list of valid properties
   const invalidFields = Object.keys(data).filter((field) => {
@@ -37,11 +38,14 @@ function hasOnlyValidProperties(req, res, next) {
   next();
 }
 
+// Middleware: Use hasProperties function (in errors folder) to confirm req body has all required table properties
+// Used in: create and editTable
 const hasRequiredProperties = hasProperties("table_name", "capacity");
 
-// Validate capacity field as being a number and at least 1
+// Middleware: Validate capacity field as being a number and at least 1
+// Used in: create and editTable
 function hasValidCapacity(req, res, next) {
-  const { capacity } = res.locals.table;
+  const { capacity } = res.locals.tableData;
 
   if (capacity <= 0 || typeof capacity !== "number") {
     return next({
@@ -52,9 +56,10 @@ function hasValidCapacity(req, res, next) {
   next();
 }
 
-// Validate that table_name field contains at least 2 characters
+// Middleware: Validate that table_name field contains at least 2 characters
+// Used in: create and editTable
 function hasValidName(req, res, next) {
-  let { table_name } = res.locals.table;
+  let { table_name } = res.locals.tableData;
   table_name = table_name.trim();
 
   if (table_name.length < 2) {
@@ -66,12 +71,14 @@ function hasValidName(req, res, next) {
   next();
 }
 
-// Following validation, create new table
+// Main function: Following validation, create new table
 async function create(req, res) {
-  const newTable = await service.create(res.locals.table);
+  const newTable = await service.create(res.locals.tableData);
   res.status(201).json({ data: newTable[0] });
 }
 
+// Middleware: Confirm table ID in req parameters exists in database
+// Used in: update, unseat, read, editTable, and delete
 async function tableExists(req, res, next) {
   const { table_id } = req.params;
   const table = await service.read(table_id);
@@ -84,6 +91,8 @@ async function tableExists(req, res, next) {
   next({ status: 404, message: `Table ${table_id} cannot be found.` });
 }
 
+// Middleware: Confirm table is not occupied (reservation_id column must be null)
+// Used in: update
 function isAvailable(req, res, next) {
   const { table_name, reservation_id } = res.locals.table;
 
@@ -96,6 +105,8 @@ function isAvailable(req, res, next) {
   next();
 }
 
+// Middleware: Confirm reservation ID to be seated exists req body and in database
+// Used in: update
 async function reservationExists(req, res, next) {
   const { data } = req.body;
 
@@ -117,6 +128,8 @@ async function reservationExists(req, res, next) {
   });
 }
 
+// Middleware: Confirm status of reservation to be seated is set to "booked"
+// Used in: update
 function statusIsBooked(req, res, next) {
   const status = res.locals.reservation.status;
   if (status === "seated") {
@@ -131,9 +144,17 @@ function statusIsBooked(req, res, next) {
       message: "Reservation is already finished.",
     });
   }
+  if (status === "cancelled") {
+    return next({
+      status: 400,
+      message: "Reservation is cancelled."
+    })
+  }
   next();
 }
 
+// Middleware: Confirm table has a high enough capacity to seat all people in reservation
+// Used in: update
 function hasAvailableCapacity(req, res, next) {
   const { table_name, capacity } = res.locals.table;
   const people = res.locals.reservation.people;
@@ -147,6 +168,7 @@ function hasAvailableCapacity(req, res, next) {
   next();
 }
 
+// Main function: Update a table's reservation ID to that of the reservation to be seated
 async function update(req, res) {
   const { reservation_id } = req.body.data;
   const updatedTable = { ...res.locals.table, reservation_id: reservation_id };
@@ -156,6 +178,8 @@ async function update(req, res) {
   res.status(200).json({ data });
 }
 
+// Middleware: Confirm a table's reservation ID is not null and therefore is occupied
+// Used in: unseat
 function notOccupied(req, res, next) {
   const { table_name, reservation_id } = res.locals.table;
 
@@ -168,11 +192,34 @@ function notOccupied(req, res, next) {
   next();
 }
 
+// Main function: Remove a reservation ID from a table so it is marked as free again
 async function unseat(req, res, next) {
   const { table_id, reservation_id } = res.locals.table;
   await service.statusToFinished(reservation_id);
   const data = await service.unseat(table_id);
   res.status(200).json({ data });
+}
+
+// Main function: Return all columns of an individual table
+function read(req, res) {
+  res.json({ data: res.locals.table });
+}
+
+// Main function: Update all columns of an existing table
+async function editTable(req, res) {
+  const updatedTable = {
+    ...req.body.data,
+    table_id: res.locals.table.table_id,
+  };
+
+  const data = await service.editTable(updatedTable);
+  res.json({ data });
+}
+
+// Main function: Delete a table from the database
+async function destroy(req, res) {
+  await service.destroy(res.locals.table.table_id);
+  res.sendStatus(204);
 }
 
 module.exports = {
@@ -192,9 +239,19 @@ module.exports = {
     hasAvailableCapacity,
     asyncErrorBoundary(update),
   ],
-  delete: [
+  unseat: [
     asyncErrorBoundary(tableExists),
     notOccupied,
     asyncErrorBoundary(unseat),
   ],
+  read: [asyncErrorBoundary(tableExists), read],
+  editTable: [
+    asyncErrorBoundary(tableExists),
+    hasOnlyValidProperties,
+    hasRequiredProperties,
+    hasValidCapacity,
+    hasValidName,
+    asyncErrorBoundary(editTable),
+  ],
+  delete: [asyncErrorBoundary(tableExists), asyncErrorBoundary(destroy)],
 };

@@ -8,7 +8,8 @@ import TablesList from "../tables/TablesList";
 import "./Dashboard.css";
 
 /**
- * Defines the dashboard page.
+ * Defines the dashboard page. For larger screens, the reservations and tables sections will appear
+ * side-by-side, while smaller screens place tables below reservations
  * @param date
  *  the date for which the user wants to view reservations.
  * @returns {JSX.Element}
@@ -20,7 +21,6 @@ function Dashboard({ date }) {
   const [tableError, setTableError] = useState(null);
 
   const dateQuery = useQuery().get("date");
-
   if (dateQuery) {
     date = dateQuery;
   }
@@ -32,9 +32,11 @@ function Dashboard({ date }) {
     const abortController = new AbortController();
     setResError(null);
     setTableError(null);
+
     listReservations({ date }, abortController.signal)
       .then(setReservations)
       .catch(setResError);
+
     listTables(abortController.signal).then(setTables).catch(setTableError);
     return () => abortController.abort();
   }
@@ -57,11 +59,14 @@ function Dashboard({ date }) {
                 <h5>There are no reservations for this date.</h5>
               </div>
             ) : (
-              <ReservationList reservations={reservations} setError={setResError} />
+              <ReservationList
+                reservations={reservations}
+                setError={setResError}
+              />
             )}
           </div>
         </div>
-        <div className="col-sm-12 col-xl-4 tables">
+        <div className="col-12 col-xl-4 tables">
           <h2 className="heading my-2 p-2 text-center">Tables</h2>
           <div className="d-flex justify-content-center">
             {tables.length === 0 ? (
@@ -69,11 +74,19 @@ function Dashboard({ date }) {
                 <h5>No tables have been created.</h5>
               </div>
             ) : (
-              <TablesList
-                tables={tables}
-                loadDashboard={loadDashboard}
-                setTableError={setTableError}
-              />
+              <div className="d-flex flex-column text-center">
+                <p className="mb-0">
+                  Select an unoccupied table to edit or remove it.
+                </p>
+                <p className="mb-0">
+                  Select an occupied table to finish its seating.
+                </p>
+                <TablesList
+                  tables={tables}
+                  loadDashboard={loadDashboard}
+                  setTableError={setTableError}
+                />
+              </div>
             )}
           </div>
         </div>

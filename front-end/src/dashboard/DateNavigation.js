@@ -3,6 +3,12 @@ import { Link } from "react-router-dom";
 import { today, previous, next } from "../utils/date-time";
 import "./DateNavigation.css";
 
+/**
+ * Displays the navigation buttons on the dashboard for the date to be displayed
+ * @param date 
+ * The currently displayed date
+ * @returns {JSX.element}
+ */
 function DateNavigation({ date }) {
   return (
     <div className="dateNav d-flex justify-content-center">

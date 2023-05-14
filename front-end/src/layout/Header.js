@@ -4,6 +4,10 @@ import headerImage from "../images/header2.jpg";
 import logo from "../images/Pt.png";
 import Menu from "./Menu";
 
+/**
+ * Displays the header jumbotron and navbar (via Menu component)
+ * @returns {JSX.Element}
+ */
 function Header() {
   const style = {
     background: `linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.5)), url(${headerImage})`,

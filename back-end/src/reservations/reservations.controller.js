@@ -2,7 +2,7 @@ const service = require("./reservations.service");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 const hasProperties = require("../errors/hasProperties");
 
-// Valid properties for creating a new reservation (or updating in future user story)
+// Valid properties for creating/updating a reservation
 const VALID_PROPERTIES = [
   "first_name",
   "last_name",
@@ -19,6 +19,7 @@ const VALID_PROPERTIES = [
 // Valid statuses for a reservation
 const VALID_STATUS = ["booked", "seated", "finished", "cancelled"];
 
+// Main function: List all reservation for a given date or mobile number
 async function list(req, res) {
   const { date, mobile_number } = req.query;
 
@@ -34,6 +35,8 @@ async function list(req, res) {
   }
 }
 
+// Middleware: Confirms req.body only has valid reservation properties
+// Used in: create and update
 function hasOnlyValidProperties(req, res, next) {
   const { data = {} } = req.body;
   res.locals.reservationData = req.body.data;
@@ -52,7 +55,8 @@ function hasOnlyValidProperties(req, res, next) {
   next();
 }
 
-// Use hasProperties function (in errors folder) to confirm req body has all required properties to create a reservation
+// Middleware: Use hasProperties function (in errors folder) to confirm req body has all required reservation properties
+// Used in: create and update
 const hasRequiredProperties = hasProperties(
   "first_name",
   "last_name",
@@ -62,6 +66,8 @@ const hasRequiredProperties = hasProperties(
   "people"
 );
 
+// Middleware: Confirm "people" property is a valid integer greater than 0
+// Used in: create and update
 function peopleIsNumber(req, res, next) {
   const { people } = res.locals.reservationData;
   const validNumber = Number.isInteger(people);
@@ -77,6 +83,8 @@ function peopleIsNumber(req, res, next) {
   next();
 }
 
+// Middleware: Confirm reservation date and time have valid date and time structures
+// Used in: create and update
 function hasValidDateTime(req, res, next) {
   const { reservation_date, reservation_time } = res.locals.reservationData;
 
@@ -106,7 +114,8 @@ function hasValidDateTime(req, res, next) {
   next();
 }
 
-// When creating a reservation, make sure reservation is not on a Tuesday
+// Middleware: Confirm reservation date is not on a Tuesday
+// Used in: create and update
 function notTuesday(req, res, next) {
   const { reservation_date } = res.locals.reservationData;
   const resDateObj = new Date(reservation_date);
@@ -124,7 +133,8 @@ function notTuesday(req, res, next) {
   next();
 }
 
-// When creating a reservation, make sure reservation is not for a past date (or past time for today)
+// Middleware: Confirm reservation is not for a past date (or past time for today)
+// Used in: create and update
 function notInPast(req, res, next) {
   const { reservation_date, reservation_time } = res.locals.reservationData;
 
@@ -140,9 +150,12 @@ function notInPast(req, res, next) {
   next();
 }
 
+// Middleware: Confirm reservation time is during opening hours
+// Used in: create and update
 function availableTime(req, res, next) {
   const { reservation_time } = res.locals.reservationData;
 
+  // Remove the colon from the time value to compare as an integer
   const timeNoColon = reservation_time.replace(":", "");
 
   if (timeNoColon < 1030) {
@@ -158,6 +171,8 @@ function availableTime(req, res, next) {
   next();
 }
 
+// Middleware: Confirm a new reservation's status is set to "booked or is null"
+// Used in: create and update
 function statusIsBooked(req, res, next) {
   const { status } = res.locals.reservationData;
 
@@ -170,13 +185,14 @@ function statusIsBooked(req, res, next) {
   next();
 }
 
-// With validation complete, create new reservation
+// Main function: With validation complete, create new reservation
 async function create(req, res) {
   const newReservation = await service.create(res.locals.reservationData);
   res.status(201).json({ data: newReservation[0] });
 }
 
-// Confirm reservation ID exists in DB
+// Middleware: Confirm reservation ID in req parameters exists in DB
+// Used in: read, update, and updateStatus
 async function reservationExists(req, res, next) {
   const reservation_id = req.params.reservation_id;
   const reservation = await service.read(reservation_id);
@@ -192,11 +208,13 @@ async function reservationExists(req, res, next) {
   });
 }
 
-// Return individual reservation
+// Main function: Return individual reservation
 function read(req, res, next) {
   res.json({ data: res.locals.reservation });
 }
 
+// Middleware: Confirm update status is a valid string
+// Used in : updateStatus
 function hasValidStatus(req, res, next) {
   const { data = {} } = req.body;
   if (!VALID_STATUS.includes(data.status)) {
@@ -208,6 +226,8 @@ function hasValidStatus(req, res, next) {
   next();
 }
 
+// Middleware: Confirm that current reservation status is not "finished", as finished reservations cannot be updated
+// Used in: updateStatus
 function isFinished(req, res, next) {
   const status = res.locals.reservation.status;
   if (status === "finished") {
@@ -219,6 +239,7 @@ function isFinished(req, res, next) {
   next();
 }
 
+// Main function: Update status of an existing reservation when seating, finishing, or cancelling a reservation
 async function updateStatus(req, res) {
   const updatedRes = {
     ...req.body.data,
@@ -228,6 +249,7 @@ async function updateStatus(req, res) {
   res.status(200).json({ data });
 }
 
+// Main function: Update a reservation with "booked" status
 async function update(req, res) {
   const updatedRes = {
     ...req.body.data,

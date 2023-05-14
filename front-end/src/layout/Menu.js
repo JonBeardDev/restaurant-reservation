@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 /**
  * Defines the menu for this application.
- *
+ * Displays all menu items on larger screens, collapses to "Menu" button on smaller screens
  * @returns {JSX.Element}
  */
 

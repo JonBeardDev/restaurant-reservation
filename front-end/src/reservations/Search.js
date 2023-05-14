@@ -4,16 +4,22 @@ import ReservationList from "./ReservationList";
 import ErrorAlert from "../layout/ErrorAlert";
 import "./Search.css";
 
+/**
+ * Defines and displays search form along with list of reservations matching search
+ * @returns {JSX.Element}
+ */
 function Search() {
   const [mobile_number, setNumber] = useState("");
   const [reservations, setReservations] = useState([]);
   const [error, setError] = useState(null);
+  // Set display message to blank initially
   const [message, setMessage] = useState("");
 
   const changeHandler = ({ target }) => {
     setNumber(target.value);
   };
 
+  // List reservations matching entered mobile number, or display message, on submission of form
   const submitHandler = async (event) => {
     event.preventDefault();
     const abortController = new AbortController();

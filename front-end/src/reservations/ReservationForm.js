@@ -2,6 +2,16 @@ import React from "react";
 import ErrorAlert from "../layout/ErrorAlert";
 import "./ReservationForm.css";
 
+/**
+ * Defines the form inputs for NewReservation and EditReservation pages
+ * @param reservationData
+ * Lifts up state of values to parent component
+ * @params submitHandler, changeHandler, cancelHandler, phoneHandler
+ * Handler functions for form elements
+ * @param error
+ * Error state (if any) to display via ErrorAlert
+ * @returns {JSX.Element}
+ */
 function ReservationForm({
   reservationData,
   submitHandler,
@@ -12,7 +22,7 @@ function ReservationForm({
 }) {
   return (
     <main>
-      <div className="res__form">
+      <div>
         <form
           className="needs-validation center py-3 border border-info rounded"
           onSubmit={submitHandler}

@@ -162,18 +162,30 @@ export async function updateTable(table_id, reservation_id, signal) {
  * "Deletes" a reservation from an occupied table. (i.e. sets reservation_id to null)
  * @param table_id
  * the table_id property of the table to be reverted
+ * @param signal
+ * optional AbortController.signal
  * @returns {Promise<Error|*>}
  * a promise that resolves to an empty object
  */
-export async function finishSeating(table_id) {
+export async function finishSeating(table_id, signal) {
   const url = new URL(`${API_BASE_URL}/tables/${table_id}/seat`);
   const options = {
     method: "DELETE",
     headers,
+    signal
   };
   return await fetchJson(url, options);
 }
 
+/**
+ * Updates an existing reservation
+ * @param reservation 
+ * the reservation object to be saved
+ * @param signal 
+ * optional AbortController.signal
+ * @returns {Promise<table>}
+ * a promise that resolves to the edited reservation
+ */
 export async function editReservation(reservation, signal) {
   const url = new URL(
     `${API_BASE_URL}/reservations/${reservation.reservation_id}`
@@ -187,6 +199,15 @@ export async function editReservation(reservation, signal) {
   return await fetchJson(url, options, {});
 }
 
+/**
+ * Sets the status of a reservation to "cancelled"
+ * @param reservation_id 
+ * the ID of the reservation to be updated
+ * @param signal 
+ * optional AbortController.signal
+ * @returns {Promise<reservation>}
+ * a promise that resolves to the updated reservation
+ */
 export async function cancelReservation(reservation_id, signal) {
   const url = new URL(`${API_BASE_URL}/reservations/${reservation_id}/status`);
   const options = {
@@ -196,4 +217,52 @@ export async function cancelReservation(reservation_id, signal) {
     signal,
   };
   return await fetchJson(url, options);
+}
+
+/**
+ * Retrieves a single table
+ * @param table_id 
+ * the ID of the table to be retrieved
+ * @param signal 
+ * optional AbortController.signal
+ * @returns {Promise<table>}
+ * a promise that resolves to a table object
+ */
+export async function readTable(table_id, signal) {
+  const url = new URL(`${API_BASE_URL}/tables/${table_id}`);
+  return await fetchJson(url, { headers, signal });
+}
+
+/**
+ * Updates all columns of a table
+ * @param table 
+ * the table object to be saved
+ * @param signal 
+ * optional AbortController.signal
+ * @returns {Promise<table>}
+ * a promise that resolves to the saved table
+ */
+export async function editTable(table, signal) {
+  const url = new URL(`${API_BASE_URL}/tables/${table.table_id}`);
+  const options = {
+    method: "PUT",
+    headers,
+    body: JSON.stringify({ data: table }),
+    signal,
+  };
+  return await fetchJson(url, options, {});
+}
+
+/**
+ * Deletes a table from the database
+ * @param table_id 
+ * the id of the table to be deleted
+ * @param signal
+ * optional AbortController.signal 
+ * @returns {Status}
+ * 204 status on successful deletion
+ */
+export async function deleteTable(table_id, signal) {
+  const url = new URL(`${API_BASE_URL}/tables/${table_id}`);
+  return await fetchJson(url, { method: "DELETE", headers, signal }, {});
 }

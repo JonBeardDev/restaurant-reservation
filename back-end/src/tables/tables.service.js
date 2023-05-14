@@ -23,7 +23,7 @@ function update(updatedTable) {
     .update({ reservation_id: updatedTable.reservation_id }, "*");
 }
 
-// Retrieve reservation to check status and number of people
+// Retrieve all columns of individual reservation
 function readReservation(reservation_id) {
   return knex("reservations")
     .select("*")
@@ -55,6 +55,24 @@ function statusToFinished(reservation_id) {
     .update({ status: "finished" }, "*");
 }
 
+// Retrieve all columns of an individual table
+function readTable(table_id) {
+  return knex("tables").select("*").where({ table_id: table_id }).first();
+}
+
+// Update all columns for a specific table ID
+function editTable(updatedTable) {
+  return knex("tables")
+    .select("*")
+    .where({ table_id: updatedTable.table_id })
+    .update(updatedTable, "*");
+}
+
+// Remove a table from the database
+function destroy(table_id) {
+  return knex("tables").where({ table_id: table_id }).del();
+}
+
 module.exports = {
   list,
   create,
@@ -64,4 +82,7 @@ module.exports = {
   unseat,
   statusToSeated,
   statusToFinished,
+  readTable,
+  editTable,
+  destroy,
 };

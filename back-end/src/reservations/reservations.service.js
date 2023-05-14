@@ -1,7 +1,6 @@
 const knex = require("../db/connection");
 
 // List all reservations ordered by date then time
-// Note: is this needed for final product?
 function list() {
   return knex("reservations")
     .select("*")
@@ -51,6 +50,7 @@ function updateStatus(updatedRes) {
     .then((data) => data[0]);
 }
 
+// Update all columns of a reservation
 function update(updatedRes) {
   return knex("reservations")
     .select("*")

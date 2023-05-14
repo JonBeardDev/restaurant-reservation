@@ -3,6 +3,10 @@ import { useHistory } from "react-router";
 import { createTable } from "../utils/api";
 import TableForm from "./TableForm";
 
+/**
+ * Displays the table form to create and save a new table
+ * @returns {JSX.Element}
+ */
 function NewTable() {
   const history = useHistory();
 
@@ -32,6 +36,7 @@ function NewTable() {
     history.goBack();
   };
 
+  // Save new table then go to dashboard
   const submitHandler = async (event) => {
     event.preventDefault();
     const abortController = new AbortController();
