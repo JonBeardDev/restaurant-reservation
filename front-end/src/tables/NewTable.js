@@ -47,7 +47,7 @@ function NewTable() {
 
   return (
     <>
-      <h2 className="heading my-2 p-2 text-center">New Reservation</h2>
+      <h2 className="heading my-2 p-2 text-center">New Table</h2>
       <div>
         <TableForm
           tableData={formState}
