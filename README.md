@@ -23,6 +23,7 @@ App can be viewed here: https://periodic-tables-3im1.onrender.com/
 3. Search for reservations: Is a customer calling to change their future reservation date, time, or party size? The Search page, accessible via the navbar, allows you to search for reservations by phone number.
     - Revervations will show in latest to earliest date order - no need to scroll through multiple reservations to find the most recent one.
     - Reservations of all statuses (Booked, Seated, Finished, and Cancelled) will show in searches.
+    - Try submitting 123-456-7890 for an example.
 
 
 
