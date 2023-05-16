@@ -40,6 +40,8 @@ Server located at: https://restaurant-reservation-server-flax.vercel.app/
     - Selecting an occupied table will remove the seated party from the table, freeing it up for the next seating and marking the reservation as finished.
     - Finished reservations are not visible on the dashboard.
 
+![image showing an occupied and unoccupied table along with explanation to select a table to perform unseating or editng actions on it](/front-end/src/images/Tables.png)
+
 ## API
 ### "/reservations" / "/reservations?date=" / "reservations?mobile_number="
 - GET: Lists all reservations for specific date, ordered by reservation time (today, if no date provided), OR lists all reservations for specific or partial contact number.
