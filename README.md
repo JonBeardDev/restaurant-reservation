@@ -6,8 +6,8 @@ Full stack PERN (PostgreSQL, Express, React, Node) application for use by restau
 ![image of dashboard, showing cards for booked and seated reservations, and free and occupied tables](/front-end/src/images/Dashboard.png)
 
 ## Live demonstration
-App can be viewed here: https://restaurant-reservation-app-gamma.vercel.app/
-Server located at: https://restaurant-reservation-server-flax.vercel.app/
+- App can be viewed here: https://restaurant-reservation-app-gamma.vercel.app/
+- Server located at: https://restaurant-reservation-server-flax.vercel.app/
 
 ## Features
 ### Reservation Management
