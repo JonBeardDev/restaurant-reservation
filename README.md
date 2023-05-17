@@ -1,4 +1,4 @@
-# Periodic Table
+# Periodic Tables
 ## Restaurant Reservation Tracking System
 
 Full stack PERN (PostgreSQL, Express, React, Node) application for use by restaurant front-of-house/management to keep track of reservation and table seatings.
