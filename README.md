@@ -1,7 +1,7 @@
 # Periodic Table
 ## Restaurant Reservation Tracking System
 
-Full PERN stack application for use by restaurant front-of-house/management to keep track of reservation and table seatings.
+Full stack PERN (PostgreSQL, Express, React, Node) application for use by restaurant front-of-house/management to keep track of reservation and table seatings.
 
 ![image of dashboard, showing cards for booked and seated reservations, and free and occupied tables](/front-end/src/images/Dashboard.png)
 
@@ -12,8 +12,8 @@ Server located at: https://restaurant-reservation-server-flax.vercel.app/
 ## Features
 ### Reservation Management
 1. Create new reservations: From the navbar, select "New Reservation", which will prompt a screen that allows the user to enter customer details for the reservation.
-    - Dates are automatically limited to only those days the restaurant is open (demo site is closed on Tuesdays)
-    - Times are limited to opening hours - up to an hour before closing (demo site is open from 10:30am to 10pm)
+    - Dates are automatically limited to only those days the restaurant is open (demo site restaurant is closed on Tuesdays)
+    - Times are limited to opening hours - up to an hour before closing (demo site restaurant is open from 10:30am to 10pm)
     - Contact number field automatically adds and removes dashes for ease of use in correct formatting.
 
 ![image of the reservation form, including blank fields for first and last name, contact number, reservation date and time, and number of guests](/front-end/src/images/New-Reservation.png)
@@ -76,3 +76,8 @@ Server located at: https://restaurant-reservation-server-flax.vercel.app/
 1. You should not need to make changes to the `./front-end/.env` file unless you want to connect to a backend at a location other than `http://localhost:5001`.
 1. Run `npm install` to install project dependencies.
 1. Run `npm run start` to start your server.
+
+## Potential Future Releases
+- Additional search functionality. Search by reservation name, display order-by options, allow user to choose which reservation statuses show up in results.
+- Uncancel reservation. Currently, once a reservation is cancelled, it cannot be undone. Some users may want to be able to undo a cancellation.
+- Add/Edit/Remove Servers. Add your servers to the database and assign them to the tables in their section. When a resevation is assigned to a table, the server will then be assigned to the reservation card. This allows the restaurant manager to view which server attended a given reservation when investigating customer enquiries.
